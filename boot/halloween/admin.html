@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Wall Admin</title>
+<link rel="icon" href="data:,">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root { color-scheme: dark; }
+  body { margin: 0; padding: 16px; background: #0b0b0d; color: #ddd;
+         font: 16px -apple-system, "Segoe UI", Roboto, sans-serif; }
+  h1 { font-size: 20px; margin: 0 0 4px; color: #ff6a00; }
+  p.sub { margin: 0 0 16px; color: #888; font-size: 13px; }
+  h2 { font-size: 15px; margin: 22px 0 8px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+  .ph { position: relative; border-radius: 8px; overflow: hidden; background: #16161a; }
+  .ph img { width: 100%; height: 140px; object-fit: cover; display: block; }
+  .ph button, .msg button {
+    border: 0; background: #c01818; color: #fff; font-size: 15px; font-weight: 700;
+    border-radius: 6px; padding: 8px 0; width: 100%; cursor: pointer; }
+  .ph button { border-radius: 0; }
+  .msg { display: flex; align-items: center; gap: 10px; background: #16161a;
+         border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
+  .msg span { flex: 1; word-break: break-word; }
+  .msg button { width: 72px; padding: 8px 0; flex: none; }
+  .bar { margin-top: 10px; }
+  .bar button { background: #333; color: #eee; border: 0; border-radius: 6px;
+                padding: 10px 14px; font-size: 14px; cursor: pointer; }
+  .empty { color: #666; font-size: 14px; }
+  #err { color: #ff5050; margin-top: 12px; min-height: 1.2em; }
+</style>
+</head>
+<body>
+<h1>Haunted Wall admin</h1>
+<p class="sub">Deleting removes it from the wall within a few seconds.</p>
+<h2>Photos</h2>
+<div id="photos" class="grid"><span class="empty">loading…</span></div>
+<h2>Guest messages</h2>
+<div id="msgs"><span class="empty">loading…</span></div>
+<div class="bar"><button onclick="clearMsgs()">Clear all messages</button></div>
+<div id="err"></div>
+<script>
+const KEY = new URLSearchParams(location.search).get('key') || '';
+const err = (m) => { document.getElementById('err').textContent = m || ''; };
+
+async function api(payload) {
+  const r = await fetch('/api/admin', { method: 'POST',
+    body: JSON.stringify(Object.assign({ key: KEY }, payload)) });
+  if (r.status === 403) { err('Wrong or missing key in the link.'); throw new Error('key'); }
+  if (!r.ok) { err('Request failed.'); throw new Error('http ' + r.status); }
+  err('');
+  return r.json();
+}
+
+async function refresh() {
+  const r = await fetch('/api/photos?ts=' + Date.now(), { cache: 'no-store' });
+  const data = await r.json();
+  const ph = document.getElementById('photos');
+  ph.innerHTML = '';
+  if (!(data.photos || []).length) ph.innerHTML = '<span class="empty">No photos uploaded.</span>';
+  for (const name of data.photos || []) {
+    const d = document.createElement('div'); d.className = 'ph';
+    const img = document.createElement('img');
+    img.src = '/photos/' + encodeURIComponent(name); img.loading = 'lazy';
+    const b = document.createElement('button'); b.textContent = 'Delete';
+    b.onclick = async () => {
+      if (!confirm('Delete this photo from the wall?')) return;
+      await api({ action: 'delphoto', name }); refresh();
+    };
+    d.append(img, b); ph.append(d);
+  }
+  const ms = document.getElementById('msgs');
+  ms.innerHTML = '';
+  if (!(data.messages || []).length) ms.innerHTML = '<span class="empty">No live guest messages.</span>';
+  for (const m of data.messages || []) {
+    const d = document.createElement('div'); d.className = 'msg';
+    const sp = document.createElement('span'); sp.textContent = m;
+    const b = document.createElement('button'); b.textContent = 'Delete';
+    b.onclick = async () => { await api({ action: 'delmsg', m }); refresh(); };
+    d.append(sp, b); ms.append(d);
+  }
+}
+
+async function clearMsgs() {
+  if (!confirm('Remove every guest message?')) return;
+  await api({ action: 'clearmsgs' }); refresh();
+}
+
+refresh();
+setInterval(refresh, 10000);
+</script>
+</body>
+</html>

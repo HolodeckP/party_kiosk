@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Haunted Wall
+Exec=/home/pi/halloween/kiosk.sh
+X-GNOME-Autostart-enabled=true
+NoDisplay=true

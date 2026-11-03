@@ -1,0 +1,20 @@
+# Copy to music.conf and fill in for your own house. music.conf is gitignored
+# because it holds your speaker IP, LLM host, and admin key.
+
+# Which Sonos speaker to listen to. If this IP stops answering (router reboot
+# handed out new DHCP leases), music.py re-finds the room by name.
+SONOS_IP=
+SONOS_ROOM=Living Room
+
+# Local Ollama server for the wordplay (creepy lines themed to the playing track).
+# A hostname survives DHCP lease changes better than an IP. Leave blank to use
+# the built-in template lines only.
+OLLAMA_URL=http://your-laptop.local:11434
+OLLAMA_MODEL=llama3.2:3b
+
+SHOW_URL=http://localhost:8080
+POLL_SECONDS=5
+LINES_PER_TRACK=3
+
+# Admin page key: http://<pi>:8080/admin?key=<ADMIN_KEY>
+ADMIN_KEY=changeme

@@ -1,0 +1,14 @@
+# Private: real WiFi credentials (printable QR signs for the party)
+qr-signs.html
+screenshots/qr-signs-preview.jpg
+
+# Private: per-house config (speaker IP, LLM host, admin key). See music.conf.example.
+boot/halloween/music.conf
+
+# Party data that lives on the Pi, never in git
+boot/halloween/photos/
+boot/halloween/messages.json
+boot/halloween/kiosk-url.txt
+
+__pycache__/
+.DS_Store

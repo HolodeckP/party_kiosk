@@ -1,0 +1,21 @@
+#cloud-config
+# Haunted Wall first boot (cloud-init NoCloud). Creates user pi, enables SSH, then runs
+# halloween-setup.sh from the boot partition and reboots into the show.
+hostname: halloween
+manage_etc_hosts: true
+users:
+- name: pi
+  gecos: Haunted Wall
+  groups: users,adm,dialout,audio,netdev,video,plugdev,cdrom,games,input,gpio,spi,i2c,render,sudo
+  shell: /bin/bash
+  lock_passwd: false
+  passwd: $6Ym7OKT34TZQ
+  sudo: ALL=(ALL) NOPASSWD:ALL
+ssh_pwauth: true
+enable_ssh: true
+runcmd:
+- [systemctl, enable, --now, ssh]
+- [bash, /boot/firmware/halloween-setup.sh]
+power_state:
+  mode: reboot
+  condition: true

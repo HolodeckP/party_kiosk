@@ -1,0 +1,6 @@
+# Optional: join your home WiFi so phones can upload photos at http://halloween.local:8080
+# Fill in SSID and PASSWORD, keep the quotes. Leave SSID empty and the Pi makes its own
+# hotspot instead: network "HauntedWall", password "halloween2026", upload page http://10.42.0.1:8080
+SSID=""
+PASSWORD=""
+COUNTRY="US"

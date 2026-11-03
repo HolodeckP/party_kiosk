@@ -1,0 +1,10 @@
+html, body { margin: 0; padding: 0; background: #000; width: 100%; height: 100%; overflow: hidden; cursor: none; }
+/* No element may ever show a pointer on the projector or the TV. */
+* { cursor: none !important; }
+#wrap { position: fixed; inset: 0; background: #000; overflow: hidden; }
+canvas { position: absolute; display: block; background: #000; transform-origin: center center; }
+#hint { position: fixed; left: 12px; bottom: 10px; color: #7a7a8a; font: 13px/1.4 system-ui, sans-serif; opacity: 0; transition: opacity .4s; pointer-events: none; }
+#hint.show { opacity: 1; }
+@font-face { font-family: 'Creepster'; src: url('fonts/Creepster.woff2') format('woff2'); }
+@font-face { font-family: 'Nosifer'; src: url('fonts/Nosifer.woff2') format('woff2'); }
+@font-face { font-family: 'Eater'; src: url('fonts/Eater.woff2') format('woff2'); }
